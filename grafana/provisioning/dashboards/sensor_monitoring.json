@@ -1,0 +1,1751 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "$$hashKey": "object:3377",
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Influx",
+      "decimals": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 60,
+        "minValue": 0,
+        "show": true,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 16,
+      "interval": null,
+      "links": [],
+      "mappingType": 2,
+      "mappingTypes": [
+        {
+          "$$hashKey": "object:2608",
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "$$hashKey": "object:2609",
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": " /min",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "$$hashKey": "object:2614",
+          "from": "null",
+          "text": "0",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": true,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "$$hashKey": "object:1388",
+          "groupBy": [],
+          "measurement": "sensor.concurrent_players",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT count(\"value\") FROM \"sensor.concurrent_players\" WHERE (\"is_valid_preprocess\" = 'False') AND $timeFilter",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "False"
+            }
+          ]
+        }
+      ],
+      "thresholds": "5,10,20",
+      "timeFrom": "1m",
+      "title": "Potential invalid measures",
+      "transparent": false,
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "$$hashKey": "object:2611",
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        },
+        {
+          "$$hashKey": "object:2742",
+          "op": "=",
+          "text": "",
+          "value": "null"
+        }
+      ],
+      "valueName": "total"
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                -2
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "min"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "B",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "C",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "D",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "frequency": "20s",
+        "handler": 1,
+        "name": "Metric sending errors",
+        "noDataState": "ok",
+        "notifications": []
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Influx",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 4,
+        "y": 0
+      },
+      "id": 22,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:39439",
+          "groupBy": [],
+          "measurement": "sensor.error.sensor.concurrent_players",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "$$hashKey": "object:34567",
+          "alias": "User login metric error",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sensor.error.sensor.count_user_login",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "$$hashKey": "object:34608",
+          "alias": "random  metric  error",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sensor.error.sensor.crate_content_value",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "$$hashKey": "object:34932",
+          "alias": "influxdb metric storing error",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sensor.error.batch_sending_error",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \"value\" FROM \"sensor.error.batch_sending_error\" WHERE $timeFilter",
+          "rawQuery": false,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "$$hashKey": "object:40325",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "sensor.error.batch_sending_error",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT count(\"value\") FROM \"sensor.error.batch_sending_error\" WHERE $timeFilter GROUP BY time($__interval) fill(0)",
+          "rawQuery": false,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": -2
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Errors occuring while gathring sensor metrics",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:34347",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:34348",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "gridPos": {
+        "h": 16,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 12,
+      "limit": 10,
+      "links": [],
+      "onlyAlertsOnDashboard": false,
+      "show": "current",
+      "sortOrder": 1,
+      "stateFilter": [],
+      "title": "Alerts status",
+      "transparent": false,
+      "type": "alertlist"
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [],
+              "type": "no_value"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "D",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "frequency": "20s",
+        "handler": 1,
+        "name": "Random generation duplicated values",
+        "noDataState": "alerting",
+        "notifications": []
+      },
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Influx",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 0,
+        "y": 6
+      },
+      "id": 10,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:555",
+          "alias": "Random value",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sensor.crate_content_value",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \"value\" FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:623",
+          "alias": "Stddev of the last 10s",
+          "groupBy": [
+            {
+              "params": [
+                "10s"
+              ],
+              "type": "time"
+            }
+          ],
+          "hide": true,
+          "measurement": "sensor.crate_content_value",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT stddev(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "stddev"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:1241",
+          "alias": "Spread of the last 10s",
+          "groupBy": [
+            {
+              "params": [
+                "10s"
+              ],
+              "type": "time"
+            }
+          ],
+          "hide": true,
+          "measurement": "sensor.crate_content_value",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT spread(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "spread"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:1509",
+          "alias": "number of duplicated number the last 60s",
+          "groupBy": [],
+          "hide": true,
+          "measurement": "sensor.crate_content_value",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT count(\"value\") - count(distinct(\"value\"))  FROM \"sensor.crate_content_value\" WHERE $timeFilter AND (\"is_valid_preprocess\" = 'True')  GROUP BY time(60s)",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "distinct"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Random generator values distribution",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": 10,
+        "mode": "histogram",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:817",
+          "format": "short",
+          "label": "Number of occurence of a number in the value range corresponding",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:818",
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#d44a3a",
+        "rgba(237, 129, 40, 0.89)",
+        "#299c46"
+      ],
+      "datasource": "Influx",
+      "format": "none",
+      "gauge": {
+        "maxValue": 60,
+        "minValue": 0,
+        "show": true,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 10,
+        "y": 6
+      },
+      "hideTimeOverride": false,
+      "id": 20,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "$$hashKey": "object:1475",
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "$$hashKey": "object:1476",
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": " /min",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "$$hashKey": "object:3716",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT  count(distinct(\"value\"))  FROM \"sensor.crate_content_value\" WHERE $timeFilter AND (\"is_valid_preprocess\" = 'True')",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": "50,54,60",
+      "timeFrom": "1m",
+      "title": "Current number of distinct values of the random generator",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "$$hashKey": "object:1478",
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "total"
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [],
+              "type": "no_value"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "30s",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1000000
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "B",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "frequency": "20s",
+        "handler": 1,
+        "name": "Random generator values distribution alert",
+        "noDataState": "alerting",
+        "notifications": []
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Influx",
+      "fill": 1,
+      "gridPos": {
+        "h": 4,
+        "w": 10,
+        "x": 0,
+        "y": 12
+      },
+      "id": 18,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:3146",
+          "alias": "Random generated value",
+          "groupBy": [],
+          "measurement": "sensor.crate_content_value",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:4601",
+          "alias": "Standard deviation last 10s",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT stddev(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "$$hashKey": "object:4798",
+          "alias": "Spread last 10s",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT spread(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Random generator values evolution",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Influx",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 16
+      },
+      "id": 6,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "$$hashKey": "object:3508",
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "$$hashKey": "object:3509",
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": true,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "$$hashKey": "object:1182",
+          "groupBy": [],
+          "measurement": "sensor.count_user_login",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "title": "Current counter value",
+      "type": "singlestat",
+      "valueFontSize": "200%",
+      "valueMaps": [
+        {
+          "$$hashKey": "object:3511",
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1,
+                100
+              ],
+              "type": "outside_range"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "D",
+                "15s",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "frequency": "20s",
+        "handler": 1,
+        "name": "Counter rate of increase",
+        "noDataState": "alerting",
+        "notifications": []
+      },
+      "aliasColors": {
+        "sensor.count_user_login.count": "#e5ac0e"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Influx",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 3,
+        "y": 16
+      },
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:1283",
+          "groupBy": [],
+          "hide": true,
+          "measurement": "sensor.count_user_login",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:1334",
+          "groupBy": [],
+          "hide": true,
+          "measurement": "sensor.count_user_login",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT difference(\"value\") FROM \"sensor.count_user_login\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(1s)",
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:6749",
+          "alias": "Non negative difference (tweaked for alert)",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sensor.count_user_login",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT diff FROM (SELECT non_negative_difference(\"value\") as diff FROM \"sensor.count_user_login\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter) WHERE diff >= 0",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 1
+        },
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 100
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Counter non negative difference",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2727",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2728",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [],
+              "type": "no_value"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1,
+                7
+              ],
+              "type": "outside_range"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "B",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                4
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "min"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                10
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "frequency": "20s",
+        "handler": 1,
+        "name": "Sinus behavior is unusual",
+        "noDataState": "no_data",
+        "notifications": []
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Influx",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 10,
+        "y": 16
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:675",
+          "alias": "Current number of players",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sensor.concurrent_players",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \"value\" FROM \"sensor.concurrent_players\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "$$hashKey": "object:3467",
+          "alias": "Spread of the values in the last 20s",
+          "groupBy": [
+            {
+              "params": [
+                "20s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "sensor.concurrent_players",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "spread"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Sine like",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:725",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:726",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 16,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Sensor monitoring",
+  "uid": "JyrS014iz",
+  "version": 19
+}
