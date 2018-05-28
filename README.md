@@ -10,7 +10,7 @@ To make sure we understand what this project monitors, we will define the behavi
 - The first value, a sine-like value, output numbers usually between 5 and 10, in a sine-like shape. We will consider this as being the load of a 8 cores CPU on a server, which means that most of the metrics value show a server with a quite high load.
 - The second value, a random number, seems to indeed show random numbers between 4 000 000 and 8 000 000. We will then consider that this random number is the value of a random generator supposed to create random numbers between 4 000 000 and 8 000 000
 - The third value, a counter, is considered as a count of the number of time the sensor tried to output metrics. It should then always go up at a rate of 1 metric per second, a counter not increasing, decreasing or increasing too much would be a potential issue.
-- Looking at the values of the sensor, it seems that we can see some outliers in the metrics, that could be a defect. As we don't want those known outliers to pollute our good metrics, we will tag such outliers (3 values to 0 at the same time) with a special tag so that we can keep track on how much this defect happens without it interfering with other values.
+- Looking at the values of the sensor, it seems that we can see some outliers in the metrics, that could be a defect. As we don't want those known outliers to pollute our good metrics, we will tag such outliers (3 values to 0 at the same time) with a special tag so that we can keep track on how much this defect happens without it interfering with other values (See below under `Dashboard and Alarms/Other metrics`).
 
 ## Building and running the service:
 
@@ -121,12 +121,13 @@ When the sensor runner parses and sends the metrics, he can face some problems. 
 - If the values of the output cannot be associated to their metric (cast failing for instance): an error metric is sent, whose name is `error.{name of the failed metric}`
 - If the communication to influx is synchronous, a fail to write will be sent as a `batch_sending_error`
 - If the connection to influx is lost, failure metrics will be stored offline and sent once online, with a name `connectivity_error`
+- As mentioned earlier, the potential sensor defect measures are tagged in a special way, those measures are counter (top left counter) and an alarm is set under the `Error occuring` dashboard
 
 
 ## Future improvements:
-- Some refactoring of the code could be done to be able to configure the kind of metrics expected
+- Some refactoring of the code could be done to be able to configure the kind of metrics expected.
 - In case of scaling, using collecting agents such as statsd or telegraf before sending to InfluxDB could help.
-- More alerting options could be used if Grafana alerts are too limited
+- More alerting options could be used if Grafana alerts are too limited.
 - Logging should be used if the project grows a bit as print statements are limited compared to logs.
 - The current architecture uses HTTP calls to InfluxDB, which might become an issue as this blocks the code. Using threads could be a solution, an other would be to use UDP protocol to communicate to InfluxDB, with the risk of loosing data without being aware. A UDP supporthad been written for the sensor runner but some configurations are incomplete, making it unusable in the current state.
 - Tests should be added as soon as the project grows more than this simple code.

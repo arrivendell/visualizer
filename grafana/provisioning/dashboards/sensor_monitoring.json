@@ -277,6 +277,29 @@
               "type": "sum"
             },
             "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                15
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "G",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
@@ -489,6 +512,33 @@
             ]
           ],
           "tags": []
+        },
+        {
+          "$$hashKey": "object:7283",
+          "groupBy": [],
+          "hide": true,
+          "measurement": "sensor.bounded_random_generator",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "G",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "is_valid_preprocess",
+              "operator": "=",
+              "value": "False"
+            }
+          ]
         }
       ],
       "thresholds": [
@@ -1167,6 +1217,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:6759",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1175,6 +1226,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:6760",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1421,6 +1473,7 @@
         },
         {
           "$$hashKey": "object:1334",
+          "alias": "Difference with previous value",
           "groupBy": [],
           "hide": false,
           "measurement": "sensor.count_user_login",
@@ -1520,7 +1573,7 @@
           "label": null,
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "-1",
           "show": true
         },
         {
