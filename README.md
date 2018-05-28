@@ -28,12 +28,13 @@ Another solution is described below.
 
 ### Customize parameters running the sensor_runner not on a container:
 You need python 3.6 to run the program
-install the visualizer package by typing `pip install -e .` in the root folder. Make sure your default pip is for python3 though, or use pip3
+Install the visualizer package by typing `pip install -e .` in the root folder. Make sure your default pip is for python3 though, or use pip3
+
 Run
 - `docker-compose -f ./docker-compose-minimal.yaml build`
 -  `docker-compose -f ./docker-compose-minimal.yaml up -d`
 
-Then you can run `python run.py --host localhost --port 8086` with other options if needed.
+Then you can run `python run.py --host localhost --port 8086` with other options if needed (See below).
 
 ```
 usage: run.py [-h] [--path-executable PATH_EXECUTABLE] [--host HOST]
@@ -57,8 +58,9 @@ optional arguments:
 
 ### The sensor runner
 The sensor executable is run from a small python program, the "sensor runner", which reads its output values, for simplicity. Note that the choice of redirecting the output of the program in a log file and reading this file could have been more flexible as restarting a sensor wouldn't have required to restart the python program.
+
 The sensor runner can be summarized in 4 steps:
-- Getting the values from the output into three strings
+- Getting the values from the output into 3 strings
 - Pre-processing those values and preparing tags to define them (This is where the potential sensor defect is tagged)
 - Naming and casting those values to their corresponding metric value
 - Sending those metrics to a Metric Service
@@ -66,41 +68,42 @@ The sensor runner can be summarized in 4 steps:
 ### Sending the metrics
 
 The metric service chosen is InfluxDB, a time series database which allows us to send metrics that will directly be stored in a database. InfluxDB is well supported by Grafana, the visualization tool that we will choose to display those metrics in dashboards.
-While several ways of gathering metrics could have been chosen (Prometheus+grafana, datadog...), InfluxDB offered the possibility to easily and simply write any metrics at any time, in a push-mode, while Prometheus core functionality relies on polling, and Datadog trivial usage for custom metrics use an aggregator to limit calls to its API.
-More possibilities are obviously to take into consideration for a bigger and different project, but the scope of the project and its characteristics proves InfluxDB to be a good fit.
+
+While several ways of gathering metrics could have been chosen (Prometheus+grafana, datadog...), InfluxDB offered the possibility to easily and simply write any metrics at any time, in a push-mode, while Prometheus core functionality relies on polling (Even if some pushing is possible), and Datadog trivial usage for custom metrics uses an collector which aggregates metrics to limit calls to its API.
+More possibilities are obviously to take into consideration for a bigger and different project, but the scope of the project and its characteristics prove InfluxDB to be a good fit.
 
 ### Global schema
 ![alt text](https://i.imgur.com/Av78SQW.png)
 
-Dashboards have then been created in grafana with a set of alarms that will help us monitoring the metrics and being informed of potential problems, which will be described later. **Those dashboards are directly setup in the running process through config files**
+Dashboards have then been created in Grafana with a set of alarms that will help us monitoring the metrics and being informed of potential problems, which will be described later. **Those dashboards are directly setup in the running process through config files**
 
 ### Dashboards and Alarms.
-![alt text](https://imgur.com/a/Yr2b2pa.png)
+![alt text](https://i.imgur.com/RRnZYZW.png)
 
-Grafana is used in this project to display dashboard and creates alarms. Before continuing, let's mention that alerting through Grafana has its limitation:
+Grafana is used in this project to display dashboard and create alarms. Before continuing, let's mention that alerting through Grafana has its limitation:
 - A graph must be created to create an alarm, only one alarm can be created by graph (with multiple conditions though). This means that for a graph showing data from several systems, an alarm would trigger if one system fails, but be already triggered is a second condition is met later.
 - Alarms rules are quite basic
-- No way to have degrees of severity in alarming
-- No way to get an alert condition to be true for a given number of period before alerting (Compared to monitoring tools like cloudwatch)
+- No way to have degrees of severity in alarming (does the alarm require immediate action, or long term action)
+- No way to get an alert condition to be true for a given number of period before alerting (Compared to monitoring tools like Cloudwatch)
 
-While Kapacitor Alerting might have been a solution for adding alerts directly from InfluxDB data, overcoming limitation such as having only one alarm per graph, and a graph per alert, Grafana will be enough to detect anomalies in our case.
+While Kapacitor alerting might have been a solution for adding alerts directly from InfluxDB data, overcoming limitation such as having only one alarm per graph (or a graph per alert), Grafana will be enough to detect anomalies in our case.
 
 So, the created alerts are:
 
 ##### For the cpu load:
-- Too much load for the cpu is not good. However, we consider that we know that our server runs heavy jobs continuously. So We would tolerate a average load of 6 or 7 per minute, but not more. This alarm does not necessarily require an immediate action, thus is not critical, but might indicate a need for our server to scale.
+- Too much load for the cpu is not good. However, we consider that we know that our server runs heavy jobs continuously. So We would tolerate a average load of 6 or 7 per minute, but not more (As this is a good usage for a 8 cores cpu). This alarm does not necessarily require an immediate action, thus is not critical, but might indicate a need for our server to scale.
 - Too low load on the cpu could mean at least two things:
 - - Some jobs are not properly running (given that we know our server is supposed to run quite heavy jobs)
 - - We might need to scale down our infrastructure
 - A too important spread of the metrics could mean a non linear use of the cpu, which is common, but should not happen in a usually loaded server.
-- Several occurrence of an important load way above the number of cores could mean that something is wrong, even for a short amount of time.
+- Several occurrences of an important load way above the number of cores could mean that something is wrong, even for a short amount of time.
 
--> We deduce that the system if too loaded in our case, as the average load quite often goes over 7
+-> We deduce that the system is often too loaded in our case, as the average load quite often goes over 7 (As seen in the dashboard picture)
 
 ##### For the random generator:
 
-Here we are interested in knowing if the generator keeps showing values that look acceptable for a random generator. As we don't posses enough data to statistically test the generator (Through the chi-square method...), we will try to detect basic anomalies:
-- We display the distribution of the variables over 10 buckets of equal size in the range of the random generated number.
+Here we are interested in knowing if the generator keeps showing values that look acceptable for a random generator. As we don't posses enough data to statistically test the generator (through the chi-square method...), we will try to detect basic anomalies:
+- We display the distribution of the variables over 10 buckets of equal size in the range of the random generated number for visual monitoring.
 - We check that the generator didn't give us the same value more than twice in the last 30s (It would be very unlikely, 2 values being the same would already have only a 0.01% chance of happening (birthday paradox))
 - The average standard deviation should remain above 1 000 000 in the last minute, as random uniformly distributed variables are highly likely to be sparse.
 
@@ -112,14 +115,17 @@ Here we want to be sure our counter keeps increasing at a decent rate (No increa
 - The counter should not decrease.
 
 
-##### Other Metrics:
+#### Other Metrics:
 
-When the sensor runner parse and send the metrics, he can face some problems. Instead of silently not sending any metrics if failing, the sensor runner will emit error metrics:
+When the sensor runner parses and sends the metrics, he can face some problems. Instead of silently not sending any metrics if failing, the sensor runner will emit error metrics:
 - If the values of the output cannot be associated to their metric (cast failing for instance): an error metric is sent, whose name is `error.{name of the failed metric}`
 - If the communication to influx is synchronous, a fail to write will be sent as a `batch_sending_error`
-- If the connection to influx is lost, failures metrics will be stored offline and sent once online, with a name `connectivity_error`
+- If the connection to influx is lost, failure metrics will be stored offline and sent once online, with a name `connectivity_error`
 
 
 ## Future improvements:
 - Some refactoring of the code could be done to be able to configure the kind of metrics expected
 - In case of scaling, using collecting agents such as statsd or telegraf before sending to InfluxDB could help.
+- More alerting options could be used if Grafana alerts are too limited
+- Logging should be used if the project grows a bit as print statements are limited compared to logs.
+- The current architecture uses HTTP calls to InfluxDB, which might become an issue as this blocks the code. Using threads could be a solution, an other would be to use UDP protocol to communicate to InfluxDB, with the risk of loosing data without being aware. A UDP supporthad been written for the sensor runner but some configurations are incomplete, making it unusable in the current state.

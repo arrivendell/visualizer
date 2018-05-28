@@ -46,46 +46,38 @@ def run(path_executable: str, metric_service: MetricsService, environment: str):
     Read values from a program output, interpret the 3 first values of this output as known metrics
     and send these metrics to the metric_service
     """
-    #### BUG PATCH# ###
-    while True:
-        previous_vars = ['', '', '']
-        #####
 
-        # We open the executable as a subprocess in order to catch its ouput
-        process = subprocess.Popen(
-            path_executable, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    # We open the executable as a subprocess in order to catch its ouput
+    process = subprocess.Popen(
+        path_executable, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
 
-        for line in iter(process.stdout.readline, b''):
-            list_variables = line.decode(
-                sys.stdout.encoding).rstrip().split(' ')
-            #### BUG PATCH# ###
-            if previous_vars == list_variables:
-                break
-            previous_vars = list_variables
-            ####
-            time_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-            print(time_now, list_variables)
+    for line in iter(process.stdout.readline, b''):
+        list_variables = line.decode(
+            sys.stdout.encoding).rstrip().split(' ') # We know each values is separated by a ' '
 
-            try:
-                common_pre_processing_tags = get_common_preprocess_tags(
-                    list_variables)
-            except ValueError as e:
-                print("Cannot preprocess the output of the executable")
-                common_pre_processing_tags = {}
+        time_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        print(time_now, list_variables)
 
-            common_tags = {"env": environment, **common_pre_processing_tags}
+        try:
+            common_pre_processing_tags = get_common_preprocess_tags(
+                list_variables)
+        except ValueError as e:
+            print("Cannot preprocess the output of the executable")
+            common_pre_processing_tags = {}
 
-            formatted_metrics = []
-            #TODO The following code could be wrapped using a config file containing a list
-            # of dataset with information on the metrics (its position, name and cast function)
-            formatted_metrics.append(cast_metric(
-                list_variables[0], lambda x: float(x), SINE_NAME, common_tags))
-            formatted_metrics.append(cast_metric(
-                list_variables[1], lambda x: int(x), RANDOM_NAME, common_tags))
-            formatted_metrics.append(cast_metric(
-                list_variables[2], lambda x: int(x), COUNTER_NAME, common_tags))
+        common_tags = {"env": environment, **common_pre_processing_tags}
 
-            metric_service.send_batch_metrics(formatted_metrics)
+        formatted_metrics = []
+        #TODO The following code could be wrapped using a config file containing a list
+        # of dataset with information on the metrics (its position, name and cast function)
+        formatted_metrics.append(cast_metric(
+            list_variables[0], lambda x: float(x), SINE_NAME, common_tags))
+        formatted_metrics.append(cast_metric(
+            list_variables[1], lambda x: int(x), RANDOM_NAME, common_tags))
+        formatted_metrics.append(cast_metric(
+            list_variables[2], lambda x: int(x), COUNTER_NAME, common_tags))
+
+        metric_service.send_batch_metrics(formatted_metrics)
 
 
 if __name__ == '__main__':
@@ -101,7 +93,7 @@ if __name__ == '__main__':
     parser.add_argument('--env', type=str, default=os.environ.get('ENV'),
                         help="current environment")
     parser.add_argument('--use-udp', dest='use_udp', action='store_true',
-                        help="Set a flag to use UDP instead of TCP connections to the metric service")
+                        help="NON USABLE YET (Set a flag to use UDP instead of TCP connections to the metric service)")
     parser.add_argument('--clear-data', dest='clear_data', action='store_true',
                         help="Set the flag to force a clear of metrics before inserting the new ones.")
     parsed = parser.parse_args()

@@ -80,6 +80,9 @@ class MetricsService():
         try:
             self.client.write_points(metrics + self.connectivity_errors)
         except InfluxDBClientError as ie:
+            # We specify again the database switch in case we're back from an connection outtage,
+            # as we are not guaranted to have a connection reinitialization before running this
+            # piece of code
             self.client.switch_database(self.db_name)
             print(
                 f"Impossible to send one of the data points, sending failure metric. Error is {ie}")
