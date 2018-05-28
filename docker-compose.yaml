@@ -1,0 +1,44 @@
+version: '3'
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8089:8089"
+      - "8090:8090"
+    environment:
+      INFLUXDB_DATA_ENGINE: tsm1
+      INFLUXDB_REPORTING_DISABLED: "false"
+      INFLUXDB_UDP_ENABLED: "true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - influxdb
+    ports:
+      - "3000:3000"
+    environment:
+      GF_INSTALL_PLUGINS: "grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource"
+    links:
+      - influxdb
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+  sensor:
+    build: ./sensor_runner
+    container_name: sensor_runner
+    depends_on:
+      - grafana
+    environment:
+      ENV: "test"
+      HOST_METRICS: influxdb
+      PORT_METRICS: "8086"
+    links:
+      - influxdb
