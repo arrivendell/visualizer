@@ -129,3 +129,4 @@ When the sensor runner parses and sends the metrics, he can face some problems. 
 - More alerting options could be used if Grafana alerts are too limited
 - Logging should be used if the project grows a bit as print statements are limited compared to logs.
 - The current architecture uses HTTP calls to InfluxDB, which might become an issue as this blocks the code. Using threads could be a solution, an other would be to use UDP protocol to communicate to InfluxDB, with the risk of loosing data without being aware. A UDP supporthad been written for the sensor runner but some configurations are incomplete, making it unusable in the current state.
+- Tests should be added as soon as the project grows more than this simple code.
