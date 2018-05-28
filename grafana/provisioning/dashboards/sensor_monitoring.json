@@ -85,7 +85,7 @@
         {
           "$$hashKey": "object:1388",
           "groupBy": [],
-          "measurement": "sensor.concurrent_players",
+          "measurement": "sensor.generated_metrics_number",
           "orderByTime": "ASC",
           "policy": "default",
           "query": "SELECT count(\"value\") FROM \"sensor.concurrent_players\" WHERE (\"is_valid_preprocess\" = 'False') AND $timeFilter",
@@ -254,6 +254,29 @@
               "type": "sum"
             },
             "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                120
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "F",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
@@ -375,7 +398,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "SELECT \"value\" FROM \"sensor.error.batch_sending_error\" WHERE $timeFilter",
-          "rawQuery": false,
+          "rawQuery": true,
           "refId": "D",
           "resultFormat": "time_series",
           "select": [
@@ -410,7 +433,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "SELECT count(\"value\") FROM \"sensor.error.batch_sending_error\" WHERE $timeFilter GROUP BY time($__interval) fill(0)",
-          "rawQuery": false,
+          "rawQuery": true,
           "refId": "E",
           "resultFormat": "time_series",
           "select": [
@@ -424,6 +447,44 @@
               {
                 "params": [],
                 "type": "count"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "$$hashKey": "object:11674",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \"value\" FROM \"sensor.error.connectivity_error\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
               }
             ]
           ],
@@ -512,7 +573,7 @@
             "query": {
               "params": [
                 "A",
-                "1m",
+                "30s",
                 "now"
               ]
             },
@@ -535,7 +596,7 @@
             "query": {
               "params": [
                 "D",
-                "1m",
+                "30s",
                 "now"
               ]
             },
@@ -595,10 +656,10 @@
           "alias": "Random value",
           "groupBy": [],
           "hide": false,
-          "measurement": "sensor.crate_content_value",
+          "measurement": "sensor.bounded_random_generator",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT \"value\" FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
+          "query": "SELECT \"value\" FROM \"sensor.bounded_random_generator\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
           "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
@@ -635,7 +696,7 @@
           "measurement": "sensor.crate_content_value",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT stddev(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "query": "SELECT stddev(\"value\") FROM \"sensor.bounded_random_generator\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -676,7 +737,7 @@
           "measurement": "sensor.crate_content_value",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT spread(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "query": "SELECT spread(\"value\") FROM \"sensor.bounded_random_generator\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -710,7 +771,7 @@
           "measurement": "sensor.crate_content_value",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT count(\"value\") - count(distinct(\"value\"))  FROM \"sensor.crate_content_value\" WHERE $timeFilter AND (\"is_valid_preprocess\" = 'True')  GROUP BY time(60s)",
+          "query": "SELECT count(\"value\") - count(distinct(\"value\"))  FROM \"sensor.bounded_random_generator\" WHERE $timeFilter AND (\"is_valid_preprocess\" = 'True')  GROUP BY time(60s)",
           "rawQuery": true,
           "refId": "D",
           "resultFormat": "time_series",
@@ -783,6 +844,7 @@
         "#299c46"
       ],
       "datasource": "Influx",
+      "description": "Note that the more potential wrong values are happening, the less values would appear here. This does not mean that the random generator is wrong though, rely on alarms for that",
       "format": "none",
       "gauge": {
         "maxValue": 60,
@@ -854,7 +916,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT  count(distinct(\"value\"))  FROM \"sensor.crate_content_value\" WHERE $timeFilter AND (\"is_valid_preprocess\" = 'True')",
+          "query": "SELECT  count(distinct(\"value\"))  FROM \"sensor.bounded_random_generator\" WHERE $timeFilter AND (\"is_valid_preprocess\" = 'True')",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -875,9 +937,9 @@
           "tags": []
         }
       ],
-      "thresholds": "50,54,60",
+      "thresholds": "45,50,60",
       "timeFrom": "1m",
-      "title": "Current number of distinct values of the random generator",
+      "title": "Number of distinct values of the random generator",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -984,7 +1046,7 @@
           "$$hashKey": "object:3146",
           "alias": "Random generated value",
           "groupBy": [],
-          "measurement": "sensor.crate_content_value",
+          "measurement": "sensor.bounded_random_generator",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -1026,7 +1088,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT stddev(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "query": "SELECT stddev(\"value\") FROM \"sensor.bounded_random_generator\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -1065,7 +1127,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT spread(\"value\") FROM \"sensor.crate_content_value\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
+          "query": "SELECT spread(\"value\") FROM \"sensor.bounded_random_generator\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(10s)",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -1191,7 +1253,7 @@
         {
           "$$hashKey": "object:1182",
           "groupBy": [],
-          "measurement": "sensor.count_user_login",
+          "measurement": "sensor.generated_metrics_number",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -1240,7 +1302,7 @@
             "evaluator": {
               "params": [
                 1,
-                100
+                3
               ],
               "type": "outside_range"
             },
@@ -1257,6 +1319,29 @@
             "reducer": {
               "params": [],
               "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "B",
+                "10s",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "min"
             },
             "type": "query"
           }
@@ -1309,9 +1394,11 @@
           "$$hashKey": "object:1283",
           "groupBy": [],
           "hide": true,
-          "measurement": "sensor.count_user_login",
+          "measurement": "sensor.generated_metrics_number",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT \"value\" FROM \"sensor.generated_metrics_number\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
+          "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1335,12 +1422,12 @@
         {
           "$$hashKey": "object:1334",
           "groupBy": [],
-          "hide": true,
+          "hide": false,
           "measurement": "sensor.count_user_login",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT difference(\"value\") FROM \"sensor.count_user_login\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(1s)",
-          "rawQuery": false,
+          "query": "SELECT difference(\"value\") FROM \"sensor.generated_metrics_number\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -1367,13 +1454,13 @@
         },
         {
           "$$hashKey": "object:6749",
-          "alias": "Non negative difference (tweaked for alert)",
+          "alias": "Non negative for alert) difference (tweaked",
           "groupBy": [],
-          "hide": false,
+          "hide": true,
           "measurement": "sensor.count_user_login",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT diff FROM (SELECT non_negative_difference(\"value\") as diff FROM \"sensor.count_user_login\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter) WHERE diff >= 0",
+          "query": "SELECT diff FROM (SELECT non_negative_difference(\"value\") as diff FROM \"sensor.generated_metrics_number\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter) WHERE diff >= 0",
           "rawQuery": true,
           "refId": "D",
           "resultFormat": "time_series",
@@ -1407,7 +1494,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 100
+          "value": 3
         }
       ],
       "timeFrom": null,
@@ -1478,10 +1565,9 @@
           {
             "evaluator": {
               "params": [
-                1,
                 7
               ],
-              "type": "outside_range"
+              "type": "gt"
             },
             "operator": {
               "type": "or"
@@ -1518,14 +1604,37 @@
             },
             "reducer": {
               "params": [],
-              "type": "min"
+              "type": "avg"
             },
             "type": "query"
           },
           {
             "evaluator": {
               "params": [
-                10
+                3
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "C",
+                "1m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                7
               ],
               "type": "gt"
             },
@@ -1541,7 +1650,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "max"
+              "type": "avg"
             },
             "type": "query"
           }
@@ -1558,6 +1667,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Influx",
+      "description": "This graph ocntains metrics",
       "fill": 1,
       "gridPos": {
         "h": 6,
@@ -1590,13 +1700,13 @@
       "targets": [
         {
           "$$hashKey": "object:675",
-          "alias": "Current number of players",
+          "alias": "Current cpu load average on the last second",
           "groupBy": [],
           "hide": false,
-          "measurement": "sensor.concurrent_players",
+          "measurement": "sensor.cpu_load",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT \"value\" FROM \"sensor.concurrent_players\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
+          "query": "SELECT \"value\" FROM \"sensor.cpu_load\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter",
           "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1624,7 +1734,7 @@
           "groupBy": [
             {
               "params": [
-                "20s"
+                "5s"
               ],
               "type": "time"
             },
@@ -1636,9 +1746,11 @@
             }
           ],
           "hide": false,
-          "measurement": "sensor.concurrent_players",
+          "measurement": "sensor.cpu_load",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT spread(\"value\") FROM \"sensor.cpu_load\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY time(5s) fill(null)",
+          "rawQuery": false,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -1662,12 +1774,51 @@
               "value": "True"
             }
           ]
+        },
+        {
+          "$$hashKey": "object:46754",
+          "alias": "Count of the max values of each 10s interval over 60s",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT count(max_value) FROM (SELECT max(\"value\") as max_value FROM \"sensor.cpu_load\" WHERE (\"is_valid_preprocess\" = 'True') AND $timeFilter GROUP BY  time(10s)) WHERE $timeFilter  AND max_value>16 GROUP BY time(60s) ",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Sine like",
+      "title": "Cpu load last second (8 cores)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1747,5 +1898,5 @@
   "timezone": "",
   "title": "Sensor monitoring",
   "uid": "JyrS014iz",
-  "version": 19
+  "version": 4
 }

@@ -10,9 +10,9 @@ from sensor_runner.metrics_service import MetricsService
 MAX_CONNECTION_RETRIES = 20
 
 # Assumptions on the name of metrics from the sensor
-SINE_NAME = "sensor.concurrent_players"
-RANDOM_NAME = "sensor.crate_content_value"
-COUNTER_NAME = "sensor.count_user_login"
+SINE_NAME = "sensor.cpu_load"
+RANDOM_NAME = "sensor.bounded_random_generator"
+COUNTER_NAME = "sensor.generated_metrics_number"
 ERROR_METRIC_NAME = "sensor.error"
 
 INFLUXDB_DB_NAME = "sensor"
@@ -28,7 +28,7 @@ def cast_metric(metric_value, cast_function, metric_name, tags):
         casted_metric_value = cast_function(metric_value)
         return metric_service.format_single_value_metric(metric_name, tags, casted_metric_value)
     except ValueError:
-        print(f"Cannot cast {metric_name} with value {metric_value} to float")
+        print(f"Cannot cast {metric_name} with value {metric_value}")
         return metric_service.format_single_value_metric(f"{ERROR_METRIC_NAME}.{metric_name}", {}, 1)
 
 
@@ -63,7 +63,7 @@ def run(path_executable: str, metric_service: MetricsService, environment: str):
                 break
             previous_vars = list_variables
             ####
-            time_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+            time_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
             print(time_now, list_variables)
 
             try:
@@ -76,6 +76,8 @@ def run(path_executable: str, metric_service: MetricsService, environment: str):
             common_tags = {"env": environment, **common_pre_processing_tags}
 
             formatted_metrics = []
+            #TODO The following code could be wrapped using a config file containing a list
+            # of dataset with information on the metrics (its position, name and cast function)
             formatted_metrics.append(cast_metric(
                 list_variables[0], lambda x: float(x), SINE_NAME, common_tags))
             formatted_metrics.append(cast_metric(
@@ -107,6 +109,7 @@ if __name__ == '__main__':
     metric_service = MetricsService(INFLUXDB_DB_NAME, ERROR_METRIC_NAME)
 
     retries = MAX_CONNECTION_RETRIES
+    # We need to be able to handle the case where the metric service would not be ready
     while retries > 0:
         try:
             metric_service.init_connection(
