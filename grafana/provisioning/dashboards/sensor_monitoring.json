@@ -176,7 +176,7 @@
             "query": {
               "params": [
                 "B",
-                "1m",
+                "30s",
                 "now"
               ]
             },
@@ -199,7 +199,7 @@
             "query": {
               "params": [
                 "C",
-                "1m",
+                "30s",
                 "now"
               ]
             },
@@ -222,7 +222,7 @@
             "query": {
               "params": [
                 "D",
-                "1m",
+                "30s",
                 "now"
               ]
             },
@@ -245,7 +245,7 @@
             "query": {
               "params": [
                 "A",
-                "1m",
+                "30s",
                 "now"
               ]
             },
@@ -258,7 +258,7 @@
           {
             "evaluator": {
               "params": [
-                120
+                80
               ],
               "type": "gt"
             },
@@ -268,7 +268,7 @@
             "query": {
               "params": [
                 "F",
-                "5m",
+                "3m",
                 "now"
               ]
             },
@@ -350,8 +350,9 @@
       "targets": [
         {
           "$$hashKey": "object:39439",
+          "alias": "Bounded random generator parsing failure",
           "groupBy": [],
-          "measurement": "sensor.error.sensor.concurrent_players",
+          "measurement": "sensor.error.sensor.bounded_random_generator",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -370,10 +371,10 @@
         },
         {
           "$$hashKey": "object:34567",
-          "alias": "User login metric error",
+          "alias": "Cpu load parsing failure",
           "groupBy": [],
           "hide": false,
-          "measurement": "sensor.error.sensor.count_user_login",
+          "measurement": "sensor.error.sensor.cpu_load",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "B",
@@ -392,10 +393,10 @@
         },
         {
           "$$hashKey": "object:34608",
-          "alias": "random  metric  error",
+          "alias": "Generated metrics number parsing  error",
           "groupBy": [],
           "hide": false,
-          "measurement": "sensor.error.sensor.crate_content_value",
+          "measurement": "sensor.error.sensor.generated_metrics_number",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "C",
@@ -477,6 +478,7 @@
         },
         {
           "$$hashKey": "object:11674",
+          "alias": "Connectivity error",
           "groupBy": [
             {
               "params": [
