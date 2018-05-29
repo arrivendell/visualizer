@@ -20,6 +20,7 @@ Navigate to the root folder, and run:
   - `docker-compose build`
   - `docker-compose up ` (Adding -d for having it in the background)
 
+Note that by the nature of the sensor, metrics could stay equal from 2 seconds after starting. Restart the sensor container to try another time if needed.
 You can now login to http://localhost:3000/ enter admin/admin credentials and observe the dashboards under the Sensor monitoring dashboard
 
 ### Using another sensor:
@@ -48,8 +49,8 @@ optional arguments:
   --host HOST           Name of the host to which metrics will be sent
   --port PORT           Port number to which metrics will be sent
   --env ENV             current environment
-  --use-udp             Set a flag to use UDP instead of TCP connections to
-                        the metric service
+  --use-udp             NON USABLE YET (Set a flag to use UDP instead of
+                        TCP connections to the metric service)
   --clear-data          Set the flag to force a clear of metrics before
                         inserting the new ones.
 ```
@@ -63,19 +64,20 @@ The sensor runner can be summarized in 4 steps:
 - Getting the values from the output into 3 strings
 - Pre-processing those values and preparing tags to define them (This is where the potential sensor defect is tagged)
 - Naming and casting those values to their corresponding metric value
-- Sending those metrics to a Metric Service
+- Sending those metrics to a Metric Service.
+The sensor runner will attempt to reconnect to the Metric Service if needed.
 
 ### Sending the metrics
 
-The metric service chosen is InfluxDB, a time series database which allows us to send metrics that will directly be stored in a database. InfluxDB is well supported by Grafana, the visualization tool that we will choose to display those metrics in dashboards.
+The Metric Service chosen is InfluxDB, a time series database which allows us to send metrics that will directly be stored in a database. InfluxDB is well supported by Grafana, the visualization tool we will choose to display those metrics in dashboards.
 
-While several ways of gathering metrics could have been chosen (Prometheus+grafana, datadog...), InfluxDB offered the possibility to easily and simply write any metrics at any time, in a push-mode, while Prometheus core functionality relies on polling (Even if some pushing is possible), and Datadog trivial usage for custom metrics uses an collector which aggregates metrics to limit calls to its API.
+While several ways of gathering metrics could have been chosen (Prometheus+Grafana, Datadog...), InfluxDB offered the possibility to easily and simply write any metrics at any time, in a push-mode, while Prometheus core functionality relies on polling (Even if some pushing is possible), and Datadog trivial usage for custom metrics uses an collector which aggregates metrics to limit calls to its API.
 More possibilities are obviously to take into consideration for a bigger and different project, but the scope of the project and its characteristics prove InfluxDB to be a good fit.
 
 ### Global schema
 ![alt text](https://i.imgur.com/Av78SQW.png)
 
-Dashboards have then been created in Grafana with a set of alarms that will help us monitoring the metrics and being informed of potential problems, which will be described later. **Those dashboards are directly setup in the running process through config files**
+Dashboards have then been created in Grafana with a set of alarms that will help us monitoring the metrics and being informed of potential problems, which will be described later. **Those dashboards and alerts are directly setup in the running process through config files**
 
 ### Dashboards and Alarms.
 ![alt text](https://i.imgur.com/RRnZYZW.png)
@@ -88,19 +90,19 @@ Grafana is used in this project to display dashboard and create alarms. Before c
 
 While Kapacitor alerting might have been a solution for adding alerts directly from InfluxDB data, overcoming limitation such as having only one alarm per graph (or a graph per alert), Grafana will be enough to detect anomalies in our case.
 
-So, the created alerts are:
+The created alerts are:
 
-##### For the cpu load:
-- Too much load for the cpu is not good. However, we consider that we know that our server runs heavy jobs continuously. So We would tolerate a average load of 6 or 7 per minute, but not more (As this is a good usage for a 8 cores cpu). This alarm does not necessarily require an immediate action, thus is not critical, but might indicate a need for our server to scale.
+#### For the CPU load:
+- Too much load for the cpu is not good. However, we consider that we know that our server runs heavy jobs continuously. So we would tolerate an average load of 6 or 7 per minute, but not more (As this is a good usage for a 8 cores cpu). This alarm does not necessarily require an immediate action, thus is not critical, but might indicate a need for our server to scale.
 - Too low load on the cpu could mean at least two things:
 - - Some jobs are not properly running (given that we know our server is supposed to run quite heavy jobs)
 - - We might need to scale down our infrastructure
-- A too important spread of the metrics could mean a non linear use of the cpu, which is common, but should not happen in a usually loaded server.
+- A too important spread of the metrics could mean a non linear use of the cpu, which is common, but should not happen in a usually loaded server. Naturally, the spread varies always a bit, a spread of 0 over a given period of time would be a sign that something might be weird with the metric.
 - Several occurrences of an important load way above the number of cores could mean that something is wrong, even for a short amount of time.
 
 -> We deduce that the system is often too loaded in our case, as the average load quite often goes over 7 (As seen in the dashboard picture)
 
-##### For the random generator:
+#### For the random generator:
 
 Here we are interested in knowing if the generator keeps showing values that look acceptable for a random generator. As we don't posses enough data to statistically test the generator (through the chi-square method...), we will try to detect basic anomalies:
 - We display the distribution of the variables over 10 buckets of equal size in the range of the random generated number for visual monitoring.
@@ -108,7 +110,7 @@ Here we are interested in knowing if the generator keeps showing values that loo
 - The average standard deviation should remain above 1 000 000 in the last minute, as random uniformly distributed variables are highly likely to be sparse.
 
 
-##### For the counter:
+#### For the counter:
 
 Here we want to be sure our counter keeps increasing at a decent rate (No increase means no metrics technically sent, too fast increase means the systems is over sending metrics)
 - The average of the non negative difference should remain between 1 and 3
@@ -117,18 +119,19 @@ Here we want to be sure our counter keeps increasing at a decent rate (No increa
 
 #### Other Metrics:
 
-When the sensor runner parses and sends the metrics, he can face some problems. Instead of silently not sending any metrics if failing, the sensor runner will emit error metrics:
+When the sensor runner parses and sends the metrics, he could face some problems. Instead of silently not sending any metrics if failing, the sensor runner will emit error metrics:
 - If the values of the output cannot be associated to their metric (cast failing for instance): an error metric is sent, whose name is `error.{name of the failed metric}`
 - If the communication to influx is synchronous, a fail to write will be sent as a `batch_sending_error`
 - If the connection to influx is lost, failure metrics will be stored offline and sent once online, with a name `connectivity_error`
-- As mentioned earlier, the potential sensor defect measures are tagged in a special way, those measures are counter (top left counter) and an alarm is set under the `Error occuring` dashboard
+- As mentioned earlier, the potential 'sensor defect' measures are tagged in a special way, the number of occurence of those measures is shown in a counter (top left counter) and an alarm is set under the `Error occurring` dashboard
 
 
 ## Future improvements:
+- Taking action on alerts. Alerts currently only show up in the dashboard, but email, slack notifications or webhooks could be used. With webhooks, actions could be taken for the sensor to restart, if we wanted so. Note while restarting can solve issues, it is quite often good to investigate why a system turned bad before restarting it.
 - Some refactoring of the code could be done to be able to configure the kind of metrics expected.
 - In case of scaling, using collecting agents such as statsd or telegraf before sending to InfluxDB could help.
-- More alerting options could be used if Grafana alerts are too limited.
+- Other alerting systems could be used if Grafana alerts are too limited.
 - Logging should be used if the project grows a bit as print statements are limited compared to logs.
-- The current architecture uses HTTP calls to InfluxDB, which might become an issue as this blocks the code. Using threads could be a solution, an other would be to use UDP protocol to communicate to InfluxDB, with the risk of loosing data without being aware. A UDP supporthad been written for the sensor runner but some configurations are incomplete, making it unusable in the current state.
+- The current architecture uses HTTP calls to InfluxDB, which might become an issue as this blocks the code. Using threads could be a solution, an other would be to use UDP protocol to communicate to InfluxDB, with the risk of loosing data without being aware. A UDP support had been written for the sensor runner but some configurations are incomplete, making it unusable in the current state.
 - Tests should be added as soon as the project grows more than this simple code.
 - The error metrics in grafana could be wrongly named and this would fail silently as there is no metrics if no error. A good solution would be to always send such metrics with a counter to 0 if no problem happened
